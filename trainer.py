@@ -57,6 +57,7 @@ class Trainer(object):
                  gamma,
                  batch_size,
                  num_samples,
+                 model_save_dir,
                  num_workers=4
                  ):
 
@@ -79,6 +80,7 @@ class Trainer(object):
         self.zeros = torch.zeros(self.batch_size, dtype=torch.long, device=self.device)
         self.model.to(self.device)
         self.disc.to(self.device)
+        self.model_save_dir = model_save_dir
 
     def collect_data(self):
         data = []
@@ -146,6 +148,10 @@ class Trainer(object):
 
         self.writer.close()
 
+    def save_model(self):
+        print("Saving the model at ", self.model_save_dir+'model.pt')
+        torch.save(self.model, self.model_save_dir)
+
 
 if __name__ == '__main__':
     # Create the environment
@@ -157,13 +163,15 @@ if __name__ == '__main__':
 
     # Model Variables
     input_channels = 3
-    conv_layers = 32
+    conv_layers = 64
     height = 8
     width = 8
-    latent_dim = 64
+    latent_dim = 128
     batch_size = 8
     lr_vae = 1e-2
     lr_disc = 1e-2
+
+    model_save_dir = '/Users/navneetmadhukumar/PycharmProjects/disentangled-minigrid/'
 
     model = VAE(conv_layers=conv_layers,
                 height=height,
@@ -176,7 +184,7 @@ if __name__ == '__main__':
     trainer = Trainer(model, discriminator, lr_vae=lr_vae,
                       lr_disc=lr_disc, batch_size=batch_size,
                       beta=10, environment=env, gamma=1, num_epochs=50,
-                      num_samples=1000)
+                      num_samples=1000, model_save_dir=model_save_dir)
 
     trainer.train()
 
