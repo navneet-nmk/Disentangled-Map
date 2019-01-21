@@ -173,23 +173,28 @@ class Trainer(object):
 
         decoder = self.model.decode
         encoder = self.model.encode
+        reparametrize = self.model.reparameterize
         interpolation = torch.arange(-limit, limit + 0.1, inter)
 
         random_img = self.dataloader.dataset.__getitem__(0)[1]
         random_img = random_img.to(self.device).unsqueeze(0)
-        random_img_z = encoder(random_img)[:, :self.latent_dim]
+        mu, logvar = encoder(random_img)
+        random_img_z = reparametrize(mu, logvar)
 
         random_img_1 = self.dataloader.dataset.__getitem__(100)[1]
         random_img_1 = random_img_1.to(self.device).unsqueeze(0)
-        random_img_z_1 = encoder(random_img_1)[:, :self.latent_dim]
+        mu, logvar = encoder(random_img_1)
+        random_img_z_1 = reparametrize(mu, logvar)
 
         random_img_2 = self.dataloader.dataset.__getitem__(33)[1]
         random_img_2 = random_img_2.to(self.device).unsqueeze(0)
-        random_img_z_2 = encoder(random_img_2)[:, :self.latent_dim]
+        mu, logvar = encoder(random_img_2)
+        random_img_z_2 =reparametrize(mu, logvar)
 
         random_img_3 = self.dataloader.dataset.__getitem__(78)[1]
         random_img_3 = random_img_3.to(self.device).unsqueeze(0)
-        random_img_z_3 = encoder(random_img_3)[:, :self.latent_dim]
+        mu, logvar = encoder(random_img_3)
+        random_img_z_3 = reparametrize(mu, logvar)
 
         Z = {'random_img_1': random_img_z_2,
              'random_img_2': random_img_z_1,
@@ -241,10 +246,10 @@ if __name__ == '__main__':
     conv_layers = 32
     height = 8
     width = 8
-    latent_dim = 64
+    latent_dim = 32
     batch_size = 16
-    lr_vae = 1e-2
-    lr_disc = 1e-1
+    lr_vae = 0.01
+    lr_disc = 0.1
 
     model_save_dir = '/Users/navneetmadhukumar/PycharmProjects/disentangled-minigrid/'
 
@@ -259,7 +264,7 @@ if __name__ == '__main__':
     trainer = Trainer(model, discriminator, lr_vae=lr_vae,
                       lr_disc=lr_disc, batch_size=batch_size,
                       beta=10, environment=env, gamma=1, num_epochs=50,
-                      num_samples=3000, model_save_dir=model_save_dir, latent_dim=latent_dim)
+                      num_samples=5000, model_save_dir=model_save_dir, latent_dim=latent_dim)
 
     trainer.train()
 
