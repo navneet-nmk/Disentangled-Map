@@ -10,6 +10,13 @@ from tensorboardX import SummaryWriter
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
 from skimage import io, transform
+import os
+from torchvision.utils import make_grid, save_image
+from utils import grid2gif, mkdirs
+
+# Ignore warnings
+import warnings
+warnings.filterwarnings("ignore")
 
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
@@ -58,13 +65,15 @@ class Trainer(object):
                  batch_size,
                  num_samples,
                  model_save_dir,
-                 num_workers=4
+                 latent_dim,
+                 num_workers=4,
+                 output_save=True
                  ):
 
         self.model = autoencoder
         self.disc = discriminator
-        self.optim_vae = optim.Adam(lr=lr_vae, params=self.model.parameters())
-        self.optim_disc = optim.Adam(lr=lr_disc, params=self.disc.parameters())
+        self.optim_vae = optim.Adadelta(lr=lr_vae, params=self.model.parameters())
+        self.optim_disc = optim.Adadelta(lr=lr_disc, params=self.disc.parameters())
         self.num_epochs = num_epochs
         self.env = environment
         self.gamma = gamma
@@ -81,6 +90,8 @@ class Trainer(object):
         self.model.to(self.device)
         self.disc.to(self.device)
         self.model_save_dir = model_save_dir
+        self.latent_dim = latent_dim
+        self.output_save = True
 
     def collect_data(self):
         data = []
@@ -147,10 +158,74 @@ class Trainer(object):
             self.writer.add_scalar('data/vae_loss', va_loss / len(self.dataloader), e)
 
         self.writer.close()
+        # Save model
+        self.save_model()
+        # GIF visualization
+        self.visualize_traverse()
 
     def save_model(self):
         print("Saving the model at ", self.model_save_dir+'model.pt')
         torch.save(self.model, self.model_save_dir)
+
+    # Visualize the disentangled feature variation
+    def visualize_traverse(self, limit=3, inter=2 / 3, loc=-1):
+        self.model.eval()
+
+        decoder = self.model.decode
+        encoder = self.model.encode
+        interpolation = torch.arange(-limit, limit + 0.1, inter)
+
+        random_img = self.dataloader.dataset.__getitem__(0)[1]
+        random_img = random_img.to(self.device).unsqueeze(0)
+        random_img_z = encoder(random_img)[:, :self.latent_dim]
+
+        random_img_1 = self.dataloader.dataset.__getitem__(100)[1]
+        random_img_1 = random_img_1.to(self.device).unsqueeze(0)
+        random_img_z_1 = encoder(random_img_1)[:, :self.latent_dim]
+
+        random_img_2 = self.dataloader.dataset.__getitem__(33)[1]
+        random_img_2 = random_img_2.to(self.device).unsqueeze(0)
+        random_img_z_2 = encoder(random_img_2)[:, :self.latent_dim]
+
+        random_img_3 = self.dataloader.dataset.__getitem__(78)[1]
+        random_img_3 = random_img_3.to(self.device).unsqueeze(0)
+        random_img_z_3 = encoder(random_img_3)[:, :self.latent_dim]
+
+        Z = {'random_img_1': random_img_z_2,
+             'random_img_2': random_img_z_1,
+             'random_img_3':random_img_z_3,
+             'random_img': random_img_z}
+
+        gifs = []
+        for key in Z:
+            z_ori = Z[key]
+            samples = []
+            for row in range(self.latent_dim):
+                if loc != -1 and row != loc:
+                    continue
+                z = z_ori.clone()
+                for val in interpolation:
+                    z[:, row] = val
+                    sample = F.sigmoid(decoder(z)).data
+                    samples.append(sample)
+                    gifs.append(sample)
+            samples = torch.cat(samples, dim=0).cpu()
+
+        if self.output_save:
+            output_dir = os.path.join(self.model_save_dir, str(self.num_epochs))
+            mkdirs(output_dir)
+            gifs = torch.cat(gifs)
+            gifs = gifs.view(len(Z), self.latent_dim, len(interpolation), 3, 8, 8).transpose(1, 2)
+            for i, key in enumerate(Z.keys()):
+                for j, val in enumerate(interpolation):
+                    save_image(tensor=gifs[i][j].cpu(),
+                               filename=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
+                               nrow=self.latent_dim, pad_value=1)
+
+                grid2gif(str(os.path.join(output_dir, key + '*.jpg')),
+                         str(os.path.join(output_dir, key + '.gif')), delay=10)
+
+        self.model(train=True)
 
 
 if __name__ == '__main__':
@@ -163,11 +238,11 @@ if __name__ == '__main__':
 
     # Model Variables
     input_channels = 3
-    conv_layers = 64
+    conv_layers = 32
     height = 8
     width = 8
-    latent_dim = 128
-    batch_size = 8
+    latent_dim = 64
+    batch_size = 16
     lr_vae = 1e-2
     lr_disc = 1e-2
 
@@ -184,7 +259,7 @@ if __name__ == '__main__':
     trainer = Trainer(model, discriminator, lr_vae=lr_vae,
                       lr_disc=lr_disc, batch_size=batch_size,
                       beta=10, environment=env, gamma=1, num_epochs=50,
-                      num_samples=1000, model_save_dir=model_save_dir)
+                      num_samples=3000, model_save_dir=model_save_dir, latent_dim=latent_dim)
 
     trainer.train()
 
