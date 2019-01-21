@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.nn.init as init
 
 print("Using torch version ", torch.__version__)
 
@@ -93,6 +94,77 @@ class VAE(nn.Module):
         latent = self.reparameterize(mu, logvar)
         reconstructed = self.decode(latent)
         return reconstructed, latent
+
+
+def kaiming_init(m):
+    if isinstance(m, (nn.Linear, nn.Conv2d)):
+        init.kaiming_normal_(m.weight)
+        if m.bias is not None:
+            m.bias.data.fill_(0)
+    elif isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d)):
+        m.weight.data.fill_(1)
+        if m.bias is not None:
+            m.bias.data.fill_(0)
+
+
+def normal_init(m):
+    if isinstance(m, (nn.Linear, nn.Conv2d)):
+        init.normal_(m.weight, 0, 0.02)
+        if m.bias is not None:
+            m.bias.data.fill_(0)
+    elif isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d)):
+        m.weight.data.fill_(1)
+        if m.bias is not None:
+            m.bias.data.fill_(0)
+
+
+# Discriminator class that is used for the disentangling of the features
+class Discriminator(nn.Module):
+    def __init__(self,
+                 latent_dim,
+                 hidden_dim, output_dim, init_weight=True):
+        super(Discriminator, self).__init__()
+
+        self.latent_dim = latent_dim
+        self.hidden_dim = hidden_dim
+        self.output = output_dim
+        self.init_w = init_weight
+
+        self.net = nn.Sequential(
+            nn.Linear(self.latent_dim, self.hidden_dim),
+            nn.LeakyReLU(0.2, True),
+            nn.Linear(self.hidden_dim, self.hidden_dim),
+            nn.LeakyReLU(0.2, True),
+            nn.Linear(self.hidden_dim, self.hidden_dim),
+            nn.LeakyReLU(0.2, True),
+            nn.Linear(self.hidden_dim, self.hidden_dim),
+            nn.LeakyReLU(0.2, True),
+            nn.Linear(self.hidden_dim, self.hidden_dim),
+            nn.LeakyReLU(0.2, True),
+            nn.Linear(self.hidden_dim, self.output),
+        )
+
+        if self.init_w:
+            self.weight_init()
+
+    def weight_init(self, mode='normal'):
+        if mode == 'kaiming':
+            initializer = kaiming_init
+        elif mode == 'normal':
+            initializer = normal_init
+
+        for block in self._modules:
+            for m in self._modules[block]:
+                initializer(m)
+
+    def forward(self, z):
+        return self.net(z)
+
+
+    
+
+
+
 
 
 
