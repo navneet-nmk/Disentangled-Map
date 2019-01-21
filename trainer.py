@@ -5,6 +5,7 @@ import gym
 import numpy as np
 import loss
 from tensorboardX import SummaryWriter
+from torch.utils.data import Dataset, DataLoader
 
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
@@ -13,6 +14,19 @@ init_seed = 1
 torch.manual_seed(init_seed)
 torch.cuda.manual_seed(init_seed)
 np.random.seed(init_seed)
+
+class StatesDataset(Dataset):
+    def __init__(self, data):
+        super(StatesDataset, self).__init__()
+        self.data = data
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, item):
+        state_true_1 = self.data[item]
+        state_true_2 = self.data[np.random.randint(low=0, high=len(self.data))]
+        return state_true_1, state_true_2
 
 
 class Trainer(object):
@@ -28,7 +42,8 @@ class Trainer(object):
                  beta,
                  gamma,
                  batch_size,
-                 num_samples
+                 num_samples,
+                 num_workers=4
                  ):
 
         self.model = autoencoder
@@ -43,6 +58,7 @@ class Trainer(object):
         self.writer = SummaryWriter()
         self.batch_size = batch_size
         self.num_samples = num_samples
+        self.num_workers = num_workers
 
         self.ones = torch.ones(self.batch_size, dtype=torch.long, device=self.device)
         self.zeros = torch.zeros(self.batch_size, dtype=torch.long, device=self.device)
@@ -60,7 +76,9 @@ class Trainer(object):
         return data
 
     def create_dataloader(self):
-        pass
+        states_dataset = StatesDataset(self.collect_data())
+        self.dataloader = DataLoader(states_dataset, self.batch_size, num_workers=self.num_workers)
+        return self.dataloader
 
     def train(self):
         for e in range(self.num_epochs):
