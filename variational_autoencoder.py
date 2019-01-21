@@ -36,8 +36,12 @@ class VAE(nn.Module):
         # Encode the input state s to a latent variable z -> P(z|s)
         self.conv1 = nn.Conv2d(in_channels=self.input_channels, out_channels=self.conv_layers,
                                kernel_size=self.kernel_size, padding=self.pad, stride=self.stride)
+        self.conv1_n = nn.Conv2d(in_channels=self.conv_layers, out_channels=self.conv_layers,
+                                 kernel_size=self.kernel_size, padding=self.pad)
         self.conv2 = nn.Conv2d(in_channels=self.conv_layers, out_channels=self.conv_layers*2,
                                kernel_size=self.kernel_size, padding=self.pad, stride=self.stride)
+        self.conv2_n = nn.Conv2d(in_channels=self.conv_layers*2, out_channels=self.conv_layers*2,
+                                 kernel_size=self.kernel_size, padding=self.pad)
 
         linear_input_shape = (self.height//4)*(self.width//4)*self.conv_layers*2
 
@@ -48,8 +52,12 @@ class VAE(nn.Module):
         self.fc1 = nn.Linear(in_features=self.latent_dim, out_features=linear_input_shape)
         self.conv1_dec = nn.ConvTranspose2d(in_channels=self.conv_layers*2, out_channels=self.conv_layers*2,
                                             stride=self.stride, padding=0, kernel_size=self.kernel_size-1)
+        self.conv1_dec_n = nn.Conv2d(in_channels=self.conv_layers*2, out_channels=self.conv_layers*2,
+                                    padding=self.pad, kernel_size=self.kernel_size)
         self.conv2_dec = nn.ConvTranspose2d(in_channels=self.conv_layers*2, out_channels=self.conv_layers,
                                             stride=self.stride, padding=0, kernel_size=self.kernel_size-1)
+        self.conv2_dec_n = nn.Conv2d(in_channels=self.conv_layers, out_channels=self.conv_layers,
+                                     padding=self.pad, kernel_size=self.kernel_size)
         self.output = nn.ConvTranspose2d(in_channels=self.conv_layers, out_channels=self.input_channels,
                                          padding=self.pad, kernel_size=self.kernel_size)
 
@@ -66,7 +74,9 @@ class VAE(nn.Module):
     def encode(self, state):
         batch_size, _, _, _ = state.shape
         x = F.relu(self.conv1(state))
+        x = F.relu(self.conv1_n(x))
         x = F.relu(self.conv2(x))
+        x = F.relu(self.conv2_n(x))
         x = x.reshape(batch_size, -1)
         mu = self.mu(x)
         logvar = self.logvar(x)
@@ -86,7 +96,9 @@ class VAE(nn.Module):
         z = F.relu(self.fc1(z))
         z = z.reshape(-1, self.conv_layers*2, self.width//4, self.height//4)
         z = F.relu(self.conv1_dec(z))
+        z = F.relu(self.conv1_dec_n(z))
         z = F.relu(self.conv2_dec(z))
+        z = F.relu(self.conv2_dec_n(z))
         output = self.output(z)
         return output
 

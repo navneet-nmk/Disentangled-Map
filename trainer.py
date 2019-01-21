@@ -165,7 +165,7 @@ class Trainer(object):
 
     def save_model(self):
         print("Saving the model at ", self.model_save_dir+'model.pt')
-        torch.save(self.model, self.model_save_dir)
+        torch.save(self.model, self.model_save_dir+'model.pt')
 
     # Visualize the disentangled feature variation
     def visualize_traverse(self, limit=3, inter=2 / 3, loc=-1):
@@ -244,7 +244,7 @@ if __name__ == '__main__':
     latent_dim = 64
     batch_size = 16
     lr_vae = 1e-2
-    lr_disc = 1e-2
+    lr_disc = 1e-1
 
     model_save_dir = '/Users/navneetmadhukumar/PycharmProjects/disentangled-minigrid/'
 
