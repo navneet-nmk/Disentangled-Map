@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fe0a762b-d143-408d-a2d2-255c78258333" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/trainer.py" afterPath="$PROJECT_DIR$/trainer.py" />
+      <change beforePath="$PROJECT_DIR$/variational_autoencoder.py" afterPath="$PROJECT_DIR$/variational_autoencoder.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,8 +18,8 @@
       <file leaf-file-name="variational_autoencoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/variational_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="392">
-              <caret line="94" column="43" lean-forward="false" selection-start-line="94" selection-start-column="43" selection-end-line="94" selection-end-column="43" />
+            <state relative-caret-position="-923">
+              <caret line="87" column="37" lean-forward="false" selection-start-line="87" selection-start-column="37" selection-end-line="87" selection-end-column="37" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -28,10 +30,22 @@
       <file leaf-file-name="trainer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="98">
-              <caret line="80" column="30" lean-forward="false" selection-start-line="80" selection-start-column="30" selection-end-line="80" selection-end-column="30" />
+            <state relative-caret-position="192">
+              <caret line="165" column="18" lean-forward="false" selection-start-line="165" selection-start-column="18" selection-end-line="165" selection-end-column="18" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="env_wrappers.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/env_wrappers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="123" column="8" lean-forward="false" selection-start-line="123" selection-start-column="8" selection-end-line="123" selection-end-column="56" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -65,6 +79,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/loss.py" />
+        <option value="$PROJECT_DIR$/env_wrappers.py" />
+        <option value="$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/nn/modules/conv.py" />
         <option value="$PROJECT_DIR$/variational_autoencoder.py" />
         <option value="$PROJECT_DIR$/trainer.py" />
       </list>
@@ -125,6 +141,31 @@
       </list>
     </option>
   </component>
+  <component name="RunManager">
+    <configuration name="trainer" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="disentangled-minigrid" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/trainer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="Python.trainer" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
@@ -148,7 +189,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.44941175" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -182,10 +223,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/env_wrappers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="123" column="8" lean-forward="false" selection-start-line="123" selection-start-column="8" selection-end-line="123" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/nn/modules/conv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="317" column="29" lean-forward="false" selection-start-line="317" selection-start-column="29" selection-end-line="317" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/variational_autoencoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="94" column="43" lean-forward="false" selection-start-line="94" selection-start-column="43" selection-end-line="94" selection-end-column="43" />
+        <state relative-caret-position="-923">
+          <caret line="87" column="37" lean-forward="false" selection-start-line="87" selection-start-column="37" selection-end-line="87" selection-end-column="37" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -194,8 +253,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/trainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="80" column="30" lean-forward="false" selection-start-line="80" selection-start-column="30" selection-end-line="80" selection-end-column="30" />
+        <state relative-caret-position="192">
+          <caret line="165" column="18" lean-forward="false" selection-start-line="165" selection-start-column="18" selection-end-line="165" selection-end-column="18" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>

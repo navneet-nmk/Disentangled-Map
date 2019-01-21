@@ -34,21 +34,22 @@ class VAE(nn.Module):
         self.stride = stride
 
         # Encode the input state s to a latent variable z -> P(z|s)
-        self.conv1 = nn.Conv2d(in_channels=input-input_channels, out_channels=self.conv_layers,
+        self.conv1 = nn.Conv2d(in_channels=self.input_channels, out_channels=self.conv_layers,
                                kernel_size=self.kernel_size, padding=self.pad, stride=self.stride)
         self.conv2 = nn.Conv2d(in_channels=self.conv_layers, out_channels=self.conv_layers*2,
                                kernel_size=self.kernel_size, padding=self.pad, stride=self.stride)
 
         linear_input_shape = (self.height//4)*(self.width//4)*self.conv_layers*2
+
         self.mu = nn.Linear(in_features=linear_input_shape, out_features=self.latent_dim)
         self.logvar = nn.Linear(in_features=linear_input_shape, out_features=self.latent_dim)
 
         # Decode the latent dim z to the state s -> P(s|z)
         self.fc1 = nn.Linear(in_features=self.latent_dim, out_features=linear_input_shape)
         self.conv1_dec = nn.ConvTranspose2d(in_channels=self.conv_layers*2, out_channels=self.conv_layers*2,
-                                            stride=self.stride, padding=self.pad, kernel_size=self.kernel_size)
+                                            stride=self.stride, padding=0, kernel_size=self.kernel_size-1)
         self.conv2_dec = nn.ConvTranspose2d(in_channels=self.conv_layers*2, out_channels=self.conv_layers,
-                                            stride=self.stride, padding=self.pad, kernel_size=self.kernel_size)
+                                            stride=self.stride, padding=0, kernel_size=self.kernel_size-1)
         self.output = nn.ConvTranspose2d(in_channels=self.conv_layers, out_channels=self.input_channels,
                                          padding=self.pad, kernel_size=self.kernel_size)
 
