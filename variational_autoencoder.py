@@ -89,11 +89,14 @@ class VAE(nn.Module):
         output = self.output(z)
         return output
 
-    def forward(self, state):
+    def forward(self, state, no_dec=False):
         mu, logvar = self.encode(state)
         latent = self.reparameterize(mu, logvar)
         reconstructed = self.decode(latent)
-        return reconstructed, latent
+        if no_dec:
+            return latent
+        else:
+            return reconstructed, latent, mu, logvar
 
 
 def kaiming_init(m):
@@ -159,20 +162,3 @@ class Discriminator(nn.Module):
 
     def forward(self, z):
         return self.net(z)
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
